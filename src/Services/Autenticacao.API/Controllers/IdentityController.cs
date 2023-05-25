@@ -1,4 +1,5 @@
-﻿using Autenticacao.API.Models.InputModels;
+﻿using Autenticacao.API.Models.DomainObjects;
+using Autenticacao.API.Models.InputModels;
 using Autenticacao.API.Services;
 using Autenticacao.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -9,22 +10,25 @@ namespace Autenticacao.API.Controllers;
 public class IdentityController : MainController
 {
     private readonly IIdentityUsuarioServices _identityUsuarioServices;
+    private readonly IAspNetUser _aspNetUser;
 
-    public IdentityController(IIdentityUsuarioServices identityUsuarioServices)
+    public IdentityController(IIdentityUsuarioServices identityUsuarioServices, IAspNetUser aspNetUser)
     {
         _identityUsuarioServices = identityUsuarioServices;
+        _aspNetUser = aspNetUser;
     }
 
     [HttpPost("autenticar")]
     public async Task<ActionResult> Autenticar(string login, string senha)
     {
-        var response = await _identityUsuarioServices.Autenticar(login, senha);
-        if (!response)
-            return BadRequest();
+        var usuario = await _identityUsuarioServices.Autenticar(login, senha);
+        if (usuario != null)
+        {
+            return Ok(usuario);
+        }
 
-        return Ok();
+        return BadRequest();
     }
-
 
     /// <summary>
     /// 
