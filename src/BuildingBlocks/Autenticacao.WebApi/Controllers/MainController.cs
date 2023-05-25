@@ -6,9 +6,4 @@ namespace Autenticacao.WebApi.Controllers;
 public class MainController : ControllerBase
 {
 
-    public bool CustomResponse()
-    {
-        return true;
-    }
-
 }
