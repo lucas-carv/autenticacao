@@ -15,8 +15,23 @@ public class IdentityController : MainController
         _identityUsuarioServices = identityUsuarioServices;
     }
 
-    [HttpPost("cadastrar")]
+    [HttpPost("autenticar")]
+    public async Task<ActionResult> Autenticar(string login, string senha)
+    {
+        var response = await _identityUsuarioServices.Autenticar(login, senha);
+        if (!response)
+            return BadRequest();
 
+        return Ok();
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="inputModel"></param>
+    /// <returns></returns>
+    [HttpPost("cadastrar")]
     public async Task<ActionResult> CadastrarNovoUsuario(NovoUsuarioInputModel inputModel)
     {
         var response = await _identityUsuarioServices.CadastrarUsuario(inputModel.Login, inputModel.Senha);

@@ -339,3 +339,5 @@ ASALocalRun/
 .mfractor/
 
 .env
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
