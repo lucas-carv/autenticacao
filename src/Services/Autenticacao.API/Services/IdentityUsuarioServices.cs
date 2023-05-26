@@ -24,7 +24,20 @@ public class IdentityUsuarioServices : IIdentityUsuarioServices
         var result = await _signInManager.PasswordSignInAsync(login, senha, false, true);
 
         if (!result.Succeeded)
-            return null;
+        {
+            UsuarioLoginResponse usuarioLogin = new();
+
+            if (result.IsLockedOut)
+                usuarioLogin.AdicionarErro("Usuário temporariamente bloqueado");
+            else if (result.IsNotAllowed)
+                usuarioLogin.AdicionarErro("Essa conta não tem permissão para fazer login");
+            else if (result.RequiresTwoFactor)
+                usuarioLogin.AdicionarErro("E necessario realizar a segunda validação");
+            else
+                usuarioLogin.AdicionarErro("Usuário ou senha estão incorretos");
+
+            return usuarioLogin;
+        }
 
         return await GerarJwt(login);
     }

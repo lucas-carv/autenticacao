@@ -18,16 +18,27 @@ public class IdentityController : MainController
         _aspNetUser = aspNetUser;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="login"></param>
+    /// <param name="senha"></param>
+    /// <returns></returns>
     [HttpPost("autenticar")]
     public async Task<ActionResult> Autenticar(string login, string senha)
     {
         var usuario = await _identityUsuarioServices.Autenticar(login, senha);
-        if (usuario != null)
+        if (!usuario.Erros.Any())
         {
-            return Ok(usuario);
+            return CustomResponse(usuario);
         }
 
-        return BadRequest();
+        foreach (var erro in usuario.Erros)
+        {
+            AdicionarErroProcessamento(erro);
+        }
+
+        return CustomResponse();
     }
 
     /// <summary>
@@ -45,6 +56,4 @@ public class IdentityController : MainController
 
         return Ok();
     }
-
-
 }
