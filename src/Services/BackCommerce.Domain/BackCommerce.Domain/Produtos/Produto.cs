@@ -1,13 +1,18 @@
-﻿namespace BackCommerce.Domain.Produtos;
+﻿using BackCommerce.Domain.Promocoes;
+
+namespace BackCommerce.Domain.Produtos;
 
 public class Produto
 {
-    public string Descricao { get;private set; }
-    public decimal Valor { get;private set; }
+    public string Descricao { get; private set; }
+    public decimal ValorTotal { get; private set; }
+    public decimal ValorComDesconto { get; set; }
     public string Imagem { get; private set; }
     public string Categoria { get; private set; }
     public int QuantidadeEmEstoque { get; private set; }
-    public Produto(string descricao, decimal valor, string imagem, string categoria, int quantidadeEmEstoque)
+    public string Marca { get; set; }
+    public Desconto Desconto { get; set; }
+    public Produto(string descricao, decimal valor, string imagem, string categoria, string marca)
     {
         if (string.IsNullOrEmpty(descricao))
             throw new Exception("O produto deve ter uma descrição");
@@ -17,13 +22,24 @@ public class Produto
             throw new Exception("O produto deve ter uma imagem");
         if (string.IsNullOrEmpty(categoria))
             throw new Exception("O produto deve ter uma categoria");
-        if(quantidadeEmEstoque <= 0)
-            throw new Exception("O produto deve ter um estoque de no mínimo 1");
 
         Descricao = descricao;
-        Valor = valor;
+        ValorTotal = valor;
         Imagem = imagem;
         Categoria = categoria;
-        QuantidadeEmEstoque = quantidadeEmEstoque;
+        Marca = marca;
+    }
+
+    public void AdicionarEstoque(int quantidade)
+    {
+        QuantidadeEmEstoque += quantidade;
+    }
+
+    public void AdicionarDesconto(decimal valorDesconto, TipoDescontoEnum tipoDesconto)
+    {
+        Desconto desconto = new(this, valorDesconto, tipoDesconto);
+
+        Desconto = desconto;
+        ValorComDesconto = Desconto.ValorFinal;
     }
 }
